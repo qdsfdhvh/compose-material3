@@ -18,3 +18,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "compose-material3"
 include(":app")
+include(":material3")

@@ -1,9 +1,19 @@
 plugins {
-    id("com.android.application").version("7.2.0").apply(false)
-    id("com.android.library").version("7.2.0").apply(false)
-    kotlin("android").version("1.6.21").apply(false)
-    id("org.jetbrains.compose").version("1.2.0-alpha01-dev686").apply(false)
-    // id 'com.android.application' version '7.2.0' apply false
-    // id 'com.android.library' version '7.2.0' apply false
-    // id 'org.jetbrains.kotlin.android' version '1.5.31' apply false
+    id("com.android.application").apply(false)
+    id("com.android.library").apply(false)
+    kotlin("android").apply(false)
+}
+
+allprojects {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs = freeCompilerArgs + listOf(
+                "-opt-in=kotlin.RequiresOptIn",
+                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+                "-Xcontext-receivers",
+                "-Xskip-prerelease-check",
+            )
+        }
+    }
 }
