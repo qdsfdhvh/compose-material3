@@ -18,17 +18,15 @@ kotlin {
     ios()
     sourceSets {
         val commonMain by getting {
+            kotlin.srcDir("src/commonMain/actual")
             dependencies {
-                kotlin.srcDir("src/commonMain/actual")
-                dependencies {
-                    implementation(compose.ui)
-                    implementation(compose.foundation)
-                    implementation(compose.runtime)
-                    implementation(compose.material)
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-                    // TODO: remove when auto implementation
-                    implementation("org.jetbrains.compose.ui:ui-util:${Versions.compose_jb}")
-                }
+                implementation(compose.ui)
+                implementation(compose.foundation)
+                implementation(compose.runtime)
+                implementation(compose.material)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+                // TODO: remove when auto implementation
+                implementation("org.jetbrains.compose.ui:ui-util:${Versions.compose_jb}")
             }
         }
         val androidMain by getting {
