@@ -1,23 +1,19 @@
 /*
- *  Mask-Android
+ * Copyright 2021 The Android Open Source Project
  *
- *  Copyright (C) 2022  DimensionDev and Contributors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  This file is part of Mask X.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Mask-Android is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Mask-Android is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Mask-Android.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package androidx.compose.material3
 
 import androidx.compose.animation.AnimatedVisibility
@@ -34,6 +30,7 @@ import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -61,7 +58,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.collect
 
 /**
  * <a href="https://m3.material.io/components/floating-action-button/overview" class="external" target="_blank">Material Design floating action button</a>.
@@ -98,8 +94,8 @@ fun FloatingActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = FabPrimaryTokens.ContainerShape.toShape(),
-    containerColor: Color = FabPrimaryTokens.ContainerColor.toColor(),
+    shape: Shape = FloatingActionButtonDefaults.Shape,
+    containerColor: Color = FloatingActionButtonDefaults.ContainerColor,
     contentColor: Color = contentColorFor(containerColor),
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
     content: @Composable () -> Unit,
@@ -166,8 +162,8 @@ fun SmallFloatingActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = FabPrimarySmallTokens.ContainerShape.toShape(),
-    containerColor: Color = FabPrimaryTokens.ContainerColor.toColor(),
+    shape: Shape = FloatingActionButtonDefaults.SmallShape,
+    containerColor: Color = FloatingActionButtonDefaults.ContainerColor,
     contentColor: Color = contentColorFor(containerColor),
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
     content: @Composable () -> Unit,
@@ -218,8 +214,8 @@ fun LargeFloatingActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = FabPrimaryLargeTokens.ContainerShape.toShape(),
-    containerColor: Color = FabPrimaryLargeTokens.ContainerColor.toColor(),
+    shape: Shape = FloatingActionButtonDefaults.LargeShape,
+    containerColor: Color = FloatingActionButtonDefaults.ContainerColor,
     contentColor: Color = contentColorFor(containerColor),
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
     content: @Composable () -> Unit,
@@ -273,14 +269,14 @@ fun ExtendedFloatingActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = ExtendedFabPrimaryTokens.ContainerShape.toShape(),
-    containerColor: Color = ExtendedFabPrimaryTokens.ContainerColor.toColor(),
+    shape: Shape = FloatingActionButtonDefaults.ExtendedFabShape,
+    containerColor: Color = FloatingActionButtonDefaults.ContainerColor,
     contentColor: Color = contentColorFor(containerColor),
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
     content: @Composable RowScope.() -> Unit,
 ) {
     FloatingActionButton(
-        modifier = modifier.sizeIn(minWidth = ExtendedFabMinimumWidth),
+        modifier = modifier,
         onClick = onClick,
         interactionSource = interactionSource,
         shape = shape,
@@ -289,7 +285,10 @@ fun ExtendedFloatingActionButton(
         elevation = elevation,
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = ExtendedFabTextPadding),
+            modifier = Modifier
+                .sizeIn(minWidth = ExtendedFabMinimumWidth)
+                .padding(horizontal = ExtendedFabTextPadding),
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
             content = content,
         )
@@ -337,15 +336,13 @@ fun ExtendedFloatingActionButton(
     modifier: Modifier = Modifier,
     expanded: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = ExtendedFabPrimaryTokens.ContainerShape.toShape(),
-    containerColor: Color = ExtendedFabPrimaryTokens.ContainerColor.toColor(),
+    shape: Shape = FloatingActionButtonDefaults.ExtendedFabShape,
+    containerColor: Color = FloatingActionButtonDefaults.ContainerColor,
     contentColor: Color = contentColorFor(containerColor),
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
 ) {
     FloatingActionButton(
-        modifier = modifier.sizeIn(
-            minWidth = if (expanded) ExtendedFabMinimumWidth else FabPrimaryTokens.ContainerWidth
-        ),
+        modifier = modifier,
         onClick = onClick,
         interactionSource = interactionSource,
         shape = shape,
@@ -353,12 +350,18 @@ fun ExtendedFloatingActionButton(
         contentColor = contentColor,
         elevation = elevation,
     ) {
-        val startPadding = if (expanded) ExtendedFabPrimaryTokens.IconSize / 2 else 0.dp
+        val startPadding = if (expanded) ExtendedFabStartIconPadding else 0.dp
         val endPadding = if (expanded) ExtendedFabTextPadding else 0.dp
 
         Row(
-            modifier = Modifier.padding(start = startPadding, end = endPadding),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .sizeIn(
+                    minWidth = if (expanded) ExtendedFabMinimumWidth
+                    else FabPrimaryTokens.ContainerWidth
+                )
+                .padding(start = startPadding, end = endPadding),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = if (expanded) Arrangement.Start else Arrangement.Center
         ) {
             icon()
             AnimatedVisibility(
@@ -367,7 +370,7 @@ fun ExtendedFloatingActionButton(
                 exit = ExtendedFabCollapseAnimation,
             ) {
                 Row {
-                    Spacer(Modifier.width(ExtendedFabIconPadding))
+                    Spacer(Modifier.width(ExtendedFabEndIconPadding))
                     text()
                 }
             }
@@ -416,6 +419,22 @@ interface FloatingActionButtonElevation {
  * Contains the default values used by [FloatingActionButton]
  */
 object FloatingActionButtonDefaults {
+    /** Default shape for a floating action button. */
+    val Shape: Shape @Composable get() = FabPrimaryTokens.ContainerShape.toShape()
+
+    /** Default shape for a small floating action button. */
+    val SmallShape: Shape @Composable get() = FabPrimarySmallTokens.ContainerShape.toShape()
+
+    /** Default shape for a large floating action button. */
+    val LargeShape: Shape @Composable get() = FabPrimaryLargeTokens.ContainerShape.toShape()
+
+    /** Default shape for an extended floating action button. */
+    val ExtendedFabShape: Shape @Composable get() =
+        ExtendedFabPrimaryTokens.ContainerShape.toShape()
+
+    /** Default container color for a floating action button. */
+    val ContainerColor: Color @Composable get() = FabPrimaryTokens.ContainerColor.toColor()
+
     /**
      * The recommended size of the icon inside a [LargeFloatingActionButton].
      */
@@ -567,7 +586,9 @@ private class DefaultFloatingActionButtonElevation(
     }
 }
 
-private val ExtendedFabIconPadding = 12.dp
+private val ExtendedFabStartIconPadding = 16.dp
+
+private val ExtendedFabEndIconPadding = 12.dp
 
 private val ExtendedFabTextPadding = 20.dp
 

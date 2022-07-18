@@ -1,23 +1,19 @@
 /*
- *  Mask-Android
+ * Copyright 2022 The Android Open Source Project
  *
- *  Copyright (C) 2022  DimensionDev and Contributors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  This file is part of Mask X.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Mask-Android is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Mask-Android is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Mask-Android.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package androidx.compose.material3
 
 import androidx.compose.animation.animateColor
@@ -56,11 +52,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 import kotlin.math.max
 
-// TODO: Provide M3 tab image when asset is available.
+// TODO: Provide M3 tab asset and docs when available.
 /**
- * <a href="https://material.io/components/tabs" class="external" target="_blank">Material Design tab</a>.
+ * Material Design tab.
  *
  * A default Tab, also known as a Primary Navigation Tab. Tabs organize content across different
  * screens, data sets, and other interactions.
@@ -107,7 +104,7 @@ fun Tab(
         @Composable {
             val style =
                 MaterialTheme.typography.fromToken(PrimaryNavigationTabTokens.LabelTextFont)
-                    .copy(textAlign = TextAlign.Center)
+                .copy(textAlign = TextAlign.Center)
             ProvideTextStyle(style, content = text)
         }
     }
@@ -124,9 +121,9 @@ fun Tab(
     }
 }
 
-// TODO: Provide M3 tab image when asset is available.
+// TODO: Provide M3 tab asset and docs when available.
 /**
- * <a href="https://material.io/components/tabs" class="external" target="_blank">Material Design tab</a>.
+ * Material Design tab.
  *
  * Tabs organize content across different screens, data sets, and other interactions.
  *
@@ -197,9 +194,9 @@ fun LeadingIconTab(
     }
 }
 
-// TODO: Provide M3 tab image when asset is available.
+// TODO: Provide M3 tab asset and docs when available.
 /**
- * <a href="https://material.io/components/tabs" class="external" target="_blank">Material Design tab</a>.
+ * Material Design tab.
  *
  * Tabs organize content across different screens, data sets, and other interactions.
  *

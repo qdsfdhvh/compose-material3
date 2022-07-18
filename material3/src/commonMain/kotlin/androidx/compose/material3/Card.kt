@@ -1,23 +1,19 @@
 /*
- *  Mask-Android
+ * Copyright 2022 The Android Open Source Project
  *
- *  Copyright (C) 2022  DimensionDev and Contributors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  This file is part of Mask X.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Mask-Android is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Mask-Android is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Mask-Android.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package androidx.compose.material3
 
 import androidx.compose.animation.core.Animatable
@@ -78,11 +74,10 @@ import kotlinx.coroutines.flow.collect
  * @param colors [CardColors] that will be used to resolve the colors used for this card in
  * different states. See [CardDefaults.cardColors].
  */
-@ExperimentalMaterial3Api
 @Composable
 fun Card(
     modifier: Modifier = Modifier,
-    shape: Shape = FilledCardTokens.ContainerShape.toShape(),
+    shape: Shape = CardDefaults.Shape,
     border: BorderStroke? = null,
     elevation: CardElevation = CardDefaults.cardElevation(),
     colors: CardColors = CardDefaults.cardColors(),
@@ -140,7 +135,7 @@ fun Card(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = FilledCardTokens.ContainerShape.toShape(),
+    shape: Shape = CardDefaults.Shape,
     border: BorderStroke? = null,
     elevation: CardElevation = CardDefaults.cardElevation(),
     colors: CardColors = CardDefaults.cardColors(),
@@ -186,11 +181,10 @@ fun Card(
  * @param colors [CardColors] that will be used to resolve the color(s) used for this card in
  * different states. See [CardDefaults.elevatedCardElevation].
  */
-@ExperimentalMaterial3Api
 @Composable
 fun ElevatedCard(
     modifier: Modifier = Modifier,
-    shape: Shape = ElevatedCardTokens.ContainerShape.toShape(),
+    shape: Shape = CardDefaults.ElevatedShape,
     elevation: CardElevation = CardDefaults.elevatedCardElevation(),
     colors: CardColors = CardDefaults.elevatedCardColors(),
     content: @Composable ColumnScope.() -> Unit
@@ -240,7 +234,7 @@ fun ElevatedCard(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = ElevatedCardTokens.ContainerShape.toShape(),
+    shape: Shape = CardDefaults.ElevatedShape,
     elevation: CardElevation = CardDefaults.elevatedCardElevation(),
     colors: CardColors = CardDefaults.elevatedCardColors(),
     content: @Composable ColumnScope.() -> Unit
@@ -281,11 +275,10 @@ fun ElevatedCard(
  * @param colors [CardColors] that will be used to resolve the color(s) used for this card in
  * different states. See [CardDefaults.outlinedCardColors].
  */
-@ExperimentalMaterial3Api
 @Composable
 fun OutlinedCard(
     modifier: Modifier = Modifier,
-    shape: Shape = OutlinedCardTokens.ContainerShape.toShape(),
+    shape: Shape = CardDefaults.OutlinedShape,
     border: BorderStroke = CardDefaults.outlinedCardBorder(),
     elevation: CardElevation = CardDefaults.outlinedCardElevation(),
     colors: CardColors = CardDefaults.outlinedCardColors(),
@@ -337,7 +330,7 @@ fun OutlinedCard(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = OutlinedCardTokens.ContainerShape.toShape(),
+    shape: Shape = CardDefaults.OutlinedShape,
     border: BorderStroke = CardDefaults.outlinedCardBorder(enabled),
     elevation: CardElevation = CardDefaults.outlinedCardElevation(),
     colors: CardColors = CardDefaults.outlinedCardColors(),
@@ -424,6 +417,15 @@ interface CardColors {
  * Contains the default values used by all card types.
  */
 object CardDefaults {
+    // Shape Defaults
+    /** Default shape for a card. */
+    val Shape: Shape @Composable get() = FilledCardTokens.ContainerShape.toShape()
+
+    /** Default shape for an elevated card. */
+    val ElevatedShape: Shape @Composable get() = ElevatedCardTokens.ContainerShape.toShape()
+
+    /** Default shape for an outlined card. */
+    val OutlinedShape: Shape @Composable get() = OutlinedCardTokens.ContainerShape.toShape()
 
     /**
      * Creates a [CardElevation] that will animate between the provided values according to the

@@ -1,23 +1,19 @@
 /*
- *  Mask-Android
+ * Copyright 2021 The Android Open Source Project
  *
- *  Copyright (C) 2022  DimensionDev and Contributors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  This file is part of Mask X.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Mask-Android is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Mask-Android is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Mask-Android.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package androidx.compose.material3
 
 import androidx.compose.animation.core.AnimationSpec
@@ -54,6 +50,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
@@ -68,9 +65,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 /**
  * Possible values of [DrawerState].
@@ -265,11 +262,11 @@ fun ModalNavigationDrawer(
     modifier: Modifier = Modifier,
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
     gesturesEnabled: Boolean = true,
-    drawerShape: Shape = NavigationDrawerTokens.ContainerShape.toShape(),
+    drawerShape: Shape = DrawerDefaults.Shape,
     drawerTonalElevation: Dp = DrawerDefaults.ModalDrawerElevation,
-    drawerContainerColor: Color = NavigationDrawerTokens.ContainerColor.toColor(),
+    drawerContainerColor: Color = DrawerDefaults.ContainerColor,
     drawerContentColor: Color = contentColorFor(drawerContainerColor),
-    scrimColor: Color = DrawerDefaults.scrimColor,
+    scrimColor: Color = DrawerDefaults.ScrimColor,
     content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -340,8 +337,7 @@ fun ModalNavigationDrawer(
 @ExperimentalMaterial3Api
 @Deprecated(
     "NavigationDrawer has been renamed to ModalNavigationDrawer to better specify " +
-        "its modal nature",
-    replaceWith = ReplaceWith(
+        "its modal nature", replaceWith = ReplaceWith(
         "ModalNavigationDrawer(drawerContent,\n" +
             "        modifier,\n" +
             "        drawerState,\n" +
@@ -359,11 +355,11 @@ fun NavigationDrawer(
     modifier: Modifier = Modifier,
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
     gesturesEnabled: Boolean = true,
-    drawerShape: Shape = NavigationDrawerTokens.ContainerShape.toShape(),
+    drawerShape: Shape = DrawerDefaults.Shape,
     drawerTonalElevation: Dp = DrawerDefaults.ModalDrawerElevation,
-    drawerContainerColor: Color = NavigationDrawerTokens.ContainerColor.toColor(),
+    drawerContainerColor: Color = DrawerDefaults.ContainerColor,
     drawerContentColor: Color = contentColorFor(drawerContainerColor),
-    scrimColor: Color = DrawerDefaults.scrimColor,
+    scrimColor: Color = DrawerDefaults.ScrimColor,
     content: @Composable () -> Unit
 ) {
     ModalNavigationDrawer(
@@ -416,7 +412,7 @@ fun DismissibleNavigationDrawer(
     modifier: Modifier = Modifier,
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
     gesturesEnabled: Boolean = true,
-    drawerShape: Shape = Shapes.None,
+    drawerShape: Shape = RectangleShape,
     drawerTonalElevation: Dp = DrawerDefaults.DismissibleDrawerElevation,
     drawerContainerColor: Color = MaterialTheme.colorScheme.surface,
     drawerContentColor: Color = contentColorFor(drawerContainerColor),
@@ -515,7 +511,7 @@ fun DismissibleNavigationDrawer(
 fun PermanentNavigationDrawer(
     drawerContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
-    drawerShape: Shape = Shapes.None,
+    drawerShape: Shape = RectangleShape,
     drawerTonalElevation: Dp = DrawerDefaults.PermanentDrawerElevation,
     drawerContainerColor: Color = MaterialTheme.colorScheme.surface,
     drawerContentColor: Color = contentColorFor(drawerContainerColor),
@@ -548,6 +544,8 @@ fun PermanentNavigationDrawer(
  */
 @ExperimentalMaterial3Api
 object DrawerDefaults {
+    /** Default shape for a navigation drawer. */
+    val Shape: Shape @Composable get() = NavigationDrawerTokens.ContainerShape.toShape()
 
     /**
      * Default Elevation for drawer container in the [ModalNavigationDrawer] as specified in the
@@ -567,9 +565,13 @@ object DrawerDefaults {
      */
     val DismissibleDrawerElevation = NavigationDrawerTokens.StandardContainerElevation
 
-    val scrimColor: Color
+    /** Default color of the scrim that obscures content when the drawer is open */
+    val ScrimColor: Color
         @Composable
         get() = PaletteTokens.NeutralVariant0.copy(alpha = NavigationDrawerTokens.ScrimOpacity)
+
+    /** Default container color for a navigation drawer */
+    val ContainerColor: Color @Composable get() = NavigationDrawerTokens.ContainerColor.toColor()
 }
 
 /**

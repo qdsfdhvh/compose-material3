@@ -1,23 +1,19 @@
 /*
- *  Mask-Android
+ * Copyright 2022 The Android Open Source Project
  *
- *  Copyright (C) 2022  DimensionDev and Contributors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  This file is part of Mask X.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Mask-Android is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Mask-Android is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Mask-Android.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package androidx.compose.material3
 
 import androidx.compose.animation.core.CubicBezierEasing
@@ -77,8 +73,8 @@ import kotlin.math.max
 fun LinearProgressIndicator(
     progress: Float,
     modifier: Modifier = Modifier,
-    color: Color = LinearProgressIndicatorTokens.ActiveIndicatorColor.toColor(),
-    trackColor: Color = LinearProgressIndicatorTokens.TrackColor.toColor(),
+    color: Color = ProgressIndicatorDefaults.LinearColor,
+    trackColor: Color = ProgressIndicatorDefaults.LinearTrackColor,
 ) {
     Canvas(
         modifier
@@ -99,6 +95,8 @@ fun LinearProgressIndicator(
  *
  * ![Linear progress indicator image](https://developer.android.com/images/reference/androidx/compose/material3/linear-progress-indicator.png)
  *
+ * @sample androidx.compose.material3.samples.IndeterminateLinearProgressIndicatorSample
+ *
  * @param modifier the [Modifier] to be applied to this progress indicator
  * @param color color of this progress indicator
  * @param trackColor color of the track behind the indicator, visible when the progress has not
@@ -107,8 +105,8 @@ fun LinearProgressIndicator(
 @Composable
 fun LinearProgressIndicator(
     modifier: Modifier = Modifier,
-    color: Color = LinearProgressIndicatorTokens.ActiveIndicatorColor.toColor(),
-    trackColor: Color = LinearProgressIndicatorTokens.TrackColor.toColor(),
+    color: Color = ProgressIndicatorDefaults.LinearColor,
+    trackColor: Color = ProgressIndicatorDefaults.LinearTrackColor,
 ) {
     val infiniteTransition = rememberInfiniteTransition()
     // Fractional position of the 'head' and 'tail' of the two lines drawn, i.e. if the head is 0.8
@@ -232,8 +230,8 @@ private fun DrawScope.drawLinearIndicatorTrack(
 fun CircularProgressIndicator(
     progress: Float,
     modifier: Modifier = Modifier,
-    color: Color = CircularProgressIndicatorTokens.ActiveIndicatorColor.toColor(),
-    strokeWidth: Dp = CircularProgressIndicatorTokens.ActiveIndicatorWidth
+    color: Color = ProgressIndicatorDefaults.CircularColor,
+    strokeWidth: Dp = ProgressIndicatorDefaults.CircularStrokeWidth
 ) {
     val stroke = with(LocalDensity.current) {
         Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Butt)
@@ -258,6 +256,8 @@ fun CircularProgressIndicator(
  *
  * ![Circular progress indicator image](https://developer.android.com/images/reference/androidx/compose/material3/circular-progress-indicator.png)
  *
+ * @sample androidx.compose.material3.samples.IndeterminateCircularProgressIndicatorSample
+ *
  * @param modifier the [Modifier] to be applied to this progress indicator
  * @param color color of this progress indicator
  * @param strokeWidth stroke width of this progress indicator
@@ -265,8 +265,8 @@ fun CircularProgressIndicator(
 @Composable
 fun CircularProgressIndicator(
     modifier: Modifier = Modifier,
-    color: Color = CircularProgressIndicatorTokens.ActiveIndicatorColor.toColor(),
-    strokeWidth: Dp = CircularProgressIndicatorTokens.ActiveIndicatorWidth
+    color: Color = ProgressIndicatorDefaults.CircularColor,
+    strokeWidth: Dp = ProgressIndicatorDefaults.CircularStrokeWidth
 ) {
     val stroke = with(LocalDensity.current) {
         Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Square)
@@ -397,6 +397,21 @@ private fun DrawScope.drawIndeterminateCircularIndicator(
  * Contains the default values used for [LinearProgressIndicator] and [CircularProgressIndicator].
  */
 object ProgressIndicatorDefaults {
+    /** Default color for a linear progress indicator. */
+    val LinearColor: Color @Composable get() =
+        LinearProgressIndicatorTokens.ActiveIndicatorColor.toColor()
+
+    /** Default color for a circular progress indicator. */
+    val CircularColor: Color @Composable get() =
+        CircularProgressIndicatorTokens.ActiveIndicatorColor.toColor()
+
+    /** Default track color for a linear progress indicator. */
+    val LinearTrackColor: Color @Composable get() =
+        LinearProgressIndicatorTokens.TrackColor.toColor()
+
+    /** Default stroke width for a circular progress indicator. */
+    val CircularStrokeWidth = CircularProgressIndicatorTokens.ActiveIndicatorWidth
+
     /**
      * The default [AnimationSpec] that should be used when animating between progress in a
      * determinate progress indicator.

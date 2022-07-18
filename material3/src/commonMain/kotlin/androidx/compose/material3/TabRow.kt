@@ -1,23 +1,19 @@
 /*
- *  Mask-Android
+ * Copyright 2022 The Android Open Source Project
  *
- *  Copyright (C) 2022  DimensionDev and Contributors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  This file is part of Mask X.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Mask-Android is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Mask-Android is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Mask-Android.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package androidx.compose.material3
 
 import androidx.compose.animation.core.AnimationSpec
@@ -29,8 +25,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -56,9 +52,9 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-// TODO: Provide M3 tab row image when asset is available.
+// TODO: Provide M3 tab row asset and docs when available.
 /**
- * <a href="https://material.io/components/tabs#fixed-tabs" class="external" target="_blank">Material Design fixed tabs</a>.
+ * Material Design fixed tabs.
  *
  * Fixed tabs display all tabs in a set simultaneously. They are best for switching between related
  * content quickly, such as between transportation methods in a map. To navigate between fixed tabs,
@@ -130,10 +126,8 @@ import kotlinx.coroutines.launch
 fun TabRow(
     selectedTabIndex: Int,
     modifier: Modifier = Modifier,
-    containerColor: Color =
-        MaterialTheme.colorScheme.fromToken(PrimaryNavigationTabTokens.ContainerColor),
-    contentColor: Color =
-        MaterialTheme.colorScheme.fromToken(PrimaryNavigationTabTokens.ActiveLabelTextColor),
+    containerColor: Color = TabRowDefaults.Color,
+    contentColor: Color = TabRowDefaults.ContentColor,
     indicator: @Composable (tabPositions: List<TabPosition>) -> Unit = @Composable { tabPositions ->
         TabRowDefaults.Indicator(
             Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
@@ -184,9 +178,9 @@ fun TabRow(
     }
 }
 
-// TODO: Provide M3 tab row image when asset is available.
+// TODO: Provide M3 tab row asset and docs when available.
 /**
- * <a href="https://material.io/components/tabs#scrollable-tabs" class="external" target="_blank">Material Design scrollable tabs</a>.
+ * Material Design scrollable tabs.
  *
  * When a set of tabs cannot fit on screen, use scrollable tabs. Scrollable tabs can use longer text
  * labels and a larger number of tabs. They are best used for browsing on touch interfaces.
@@ -220,10 +214,8 @@ fun TabRow(
 fun ScrollableTabRow(
     selectedTabIndex: Int,
     modifier: Modifier = Modifier,
-    containerColor: Color =
-        MaterialTheme.colorScheme.fromToken(PrimaryNavigationTabTokens.ContainerColor),
-    contentColor: Color =
-        MaterialTheme.colorScheme.fromToken(PrimaryNavigationTabTokens.ActiveLabelTextColor),
+    containerColor: Color = TabRowDefaults.Color,
+    contentColor: Color = TabRowDefaults.ContentColor,
     edgePadding: Dp = ScrollableTabRowPadding,
     indicator: @Composable (tabPositions: List<TabPosition>) -> Unit = @Composable { tabPositions ->
         TabRowDefaults.Indicator(
@@ -249,7 +241,8 @@ fun ScrollableTabRow(
             )
         }
         SubcomposeLayout(
-            Modifier.fillMaxWidth()
+            Modifier
+                .fillMaxWidth()
                 .wrapContentSize(align = Alignment.CenterStart)
                 .horizontalScroll(scrollState)
                 .selectableGroup()
@@ -349,6 +342,13 @@ class TabPosition internal constructor(val left: Dp, val width: Dp) {
  * Contains default implementations and values used for TabRow.
  */
 object TabRowDefaults {
+    /** Default color of a tab row. */
+    val Color: Color @Composable get() = PrimaryNavigationTabTokens.ContainerColor.toColor()
+
+    /** Default content color of a tab row. */
+    val ContentColor: Color @Composable get() =
+        PrimaryNavigationTabTokens.ActiveLabelTextColor.toColor()
+
     /**
      * Default [Divider], which will be positioned at the bottom of the [TabRow], underneath the
      * indicator.
@@ -365,8 +365,7 @@ object TabRowDefaults {
             MaterialTheme.colorScheme.fromToken(PrimaryNavigationTabTokens.DividerColor)
     ) {
         androidx.compose.material3.Divider(
-            modifier = modifier, thickness = thickness, color = color
-        )
+            modifier = modifier, thickness = thickness, color = color)
     }
 
     /**

@@ -3,7 +3,7 @@ import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose").version(Versions.compose_jb)
+    id("org.jetbrains.compose")
     id("com.android.library")
     id("maven-publish")
     id("signing")
@@ -14,40 +14,44 @@ version = "1.0.1"
 
 kotlin {
     android {
-        publishLibraryVariants("release", "debug")
+        publishLibraryVariants("release")
     }
     jvm()
     ios()
     sourceSets {
         val commonMain by getting {
-            kotlin.srcDir("src/commonMain/actual")
             dependencies {
                 implementation(compose.ui)
                 implementation(compose.foundation)
                 implementation(compose.runtime)
                 implementation(compose.material)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+                implementation(compose.animation)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
                 // TODO: remove when auto implementation
                 implementation("org.jetbrains.compose.ui:ui-util:${Versions.compose_jb}")
             }
         }
         val androidMain by getting {
             dependencies {
-                // TODO: remove next 3 dependencies when b/202810604 is fixed
-                implementation("androidx.savedstate:savedstate-ktx:1.2.0-rc01")
-                implementation("androidx.lifecycle:lifecycle-runtime:2.3.0")
-                implementation("androidx.lifecycle:lifecycle-viewmodel:2.3.0")
+                api("androidx.compose.material3:material3:${Versions.material3}")
             }
         }
-        val jvmMain by sourceSets.getting
-        val iosMain by sourceSets.getting
+        val noAndroidMain by creating {
+            dependsOn(commonMain)
+        }
+        val jvmMain by getting {
+            dependsOn(noAndroidMain)
+        }
+        val iosMain by getting {
+            dependsOn(noAndroidMain)
+        }
     }
 }
 
 android {
+    namespace = "io.github.qdsfdhvh.material3"
     compileSdk = Versions.Android.compile
     buildToolsVersion = Versions.Android.buildTools
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdk = Versions.Android.min
         targetSdk = Versions.Android.target

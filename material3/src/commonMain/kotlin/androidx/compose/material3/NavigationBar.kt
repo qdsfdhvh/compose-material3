@@ -1,29 +1,26 @@
 /*
- *  Mask-Android
+ * Copyright 2021 The Android Open Source Project
  *
- *  Copyright (C) 2022  DimensionDev and Contributors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  This file is part of Mask X.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Mask-Android is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Mask-Android is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Mask-Android.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package androidx.compose.material3
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -42,17 +39,22 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
@@ -90,9 +92,9 @@ import kotlin.math.roundToInt
 @Composable
 fun NavigationBar(
     modifier: Modifier = Modifier,
-    containerColor: Color = NavigationBarTokens.ContainerColor.toColor(),
+    containerColor: Color = NavigationBarDefaults.ContainerColor,
     contentColor: Color = MaterialTheme.colorScheme.contentColorFor(containerColor),
-    tonalElevation: Dp = NavigationBarTokens.ContainerElevation,
+    tonalElevation: Dp = NavigationBarDefaults.Elevation,
     content: @Composable RowScope.() -> Unit
 ) {
     Surface(
@@ -103,7 +105,7 @@ fun NavigationBar(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().height(NavigationBarHeight).selectableGroup(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(NavigationBarItemHorizontalPadding),
             content = content
         )
     }
@@ -170,6 +172,8 @@ fun RowScope.NavigationBarItem(
         }
     }
 
+    var itemWidth by remember { mutableStateOf(0) }
+
     Box(
         modifier
             .selectable(
@@ -178,9 +182,12 @@ fun RowScope.NavigationBarItem(
                 enabled = enabled,
                 role = Role.Tab,
                 interactionSource = interactionSource,
-                indication = rememberRipple(),
+                indication = null,
             )
-            .weight(1f),
+            .weight(1f)
+            .onSizeChanged {
+                itemWidth = it.width
+            },
         contentAlignment = Alignment.Center
     ) {
         val animationProgress: Float by animateFloatAsState(
@@ -188,6 +195,30 @@ fun RowScope.NavigationBarItem(
             animationSpec = tween(ItemAnimationDurationMillis)
         )
 
+        // The entire item is selectable, but only the indicator pill shows the ripple. To achieve
+        // this, we re-map the coordinates of the item's InteractionSource into the coordinates of
+        // the indicator.
+        val deltaOffset: Offset
+        with(LocalDensity.current) {
+            val indicatorWidth = NavigationBarTokens.ActiveIndicatorWidth.roundToPx()
+            deltaOffset = Offset(
+                (itemWidth - indicatorWidth).toFloat() / 2,
+                IndicatorVerticalOffset.toPx()
+            )
+        }
+        val offsetInteractionSource = remember(interactionSource, deltaOffset) {
+            MappedInteractionSource(interactionSource, deltaOffset)
+        }
+
+        // The indicator has a width-expansion animation which interferes with the timing of the
+        // ripple, which is why they are separate composables
+        val indicatorRipple = @Composable {
+            Box(
+                Modifier.layoutId(IndicatorRippleLayoutIdTag)
+                    .clip(NavigationBarTokens.ActiveIndicatorShape.toShape())
+                    .indication(offsetInteractionSource, rememberRipple())
+            )
+        }
         val indicator = @Composable {
             Box(
                 Modifier.layoutId(IndicatorLayoutIdTag)
@@ -199,6 +230,7 @@ fun RowScope.NavigationBarItem(
         }
 
         NavigationBarItemBaselineLayout(
+            indicatorRipple = indicatorRipple,
             indicator = indicator,
             icon = styledIcon,
             label = styledLabel,
@@ -208,8 +240,18 @@ fun RowScope.NavigationBarItem(
     }
 }
 
+/** Defaults used in [NavigationBar]. */
+object NavigationBarDefaults {
+    /** Default color for a navigation bar. */
+    val ContainerColor: Color @Composable get() = NavigationBarTokens.ContainerColor.toColor()
+
+    /** Default elevation for a navigation bar. */
+    val Elevation: Dp = NavigationBarTokens.ContainerElevation
+}
+
 /** Defaults used in [NavigationBarItem]. */
 object NavigationBarItemDefaults {
+
     /**
      * Creates a [NavigationBarItemColors] with the provided colors according to the Material
      * specification.
@@ -301,6 +343,7 @@ private class DefaultNavigationBarItemColors(
 /**
  * Base layout for a [NavigationBarItem].
  *
+ * @param indicatorRipple indicator ripple for this item when it is selected
  * @param indicator indicator for this item when it is selected
  * @param icon icon for this item
  * @param label text label for this item
@@ -312,6 +355,7 @@ private class DefaultNavigationBarItemColors(
  */
 @Composable
 private fun NavigationBarItemBaselineLayout(
+    indicatorRipple: @Composable () -> Unit,
     indicator: @Composable () -> Unit,
     icon: @Composable () -> Unit,
     label: @Composable (() -> Unit)?,
@@ -319,6 +363,7 @@ private fun NavigationBarItemBaselineLayout(
     animationProgress: Float,
 ) {
     Layout({
+        indicatorRipple()
         if (animationProgress > 0) {
             indicator()
         }
@@ -329,7 +374,7 @@ private fun NavigationBarItemBaselineLayout(
             Box(
                 Modifier.layoutId(LabelLayoutIdTag)
                     .alpha(if (alwaysShowLabel) 1f else animationProgress)
-                    .padding(horizontal = NavigationBarItemHorizontalPadding)
+                    .padding(horizontal = NavigationBarItemHorizontalPadding / 2)
             ) { label() }
         }
     }) { measurables, constraints ->
@@ -339,6 +384,15 @@ private fun NavigationBarItemBaselineLayout(
         val totalIndicatorWidth = iconPlaceable.width + (IndicatorHorizontalPadding * 2).roundToPx()
         val animatedIndicatorWidth = (totalIndicatorWidth * animationProgress).roundToInt()
         val indicatorHeight = iconPlaceable.height + (IndicatorVerticalPadding * 2).roundToPx()
+        val indicatorRipplePlaceable =
+            measurables
+                .first { it.layoutId == IndicatorRippleLayoutIdTag }
+                .measure(
+                    Constraints.fixed(
+                        width = totalIndicatorWidth,
+                        height = indicatorHeight
+                    )
+                )
         val indicatorPlaceable =
             measurables
                 .firstOrNull { it.layoutId == IndicatorLayoutIdTag }
@@ -361,11 +415,12 @@ private fun NavigationBarItemBaselineLayout(
             }
 
         if (label == null) {
-            placeIcon(iconPlaceable, indicatorPlaceable, constraints)
+            placeIcon(iconPlaceable, indicatorRipplePlaceable, indicatorPlaceable, constraints)
         } else {
             placeLabelAndIcon(
                 labelPlaceable!!,
                 iconPlaceable,
+                indicatorRipplePlaceable,
                 indicatorPlaceable,
                 constraints,
                 alwaysShowLabel,
@@ -376,11 +431,11 @@ private fun NavigationBarItemBaselineLayout(
 }
 
 /**
- * Places the provided [iconPlaceable], and possibly [indicatorPlaceable] if it exists, in the
- * center of the provided [constraints].
+ * Places the provided [Placeable]s in the center of the provided [constraints].
  */
 private fun MeasureScope.placeIcon(
     iconPlaceable: Placeable,
+    indicatorRipplePlaceable: Placeable,
     indicatorPlaceable: Placeable?,
     constraints: Constraints
 ): MeasureResult {
@@ -390,6 +445,9 @@ private fun MeasureScope.placeIcon(
     val iconX = (width - iconPlaceable.width) / 2
     val iconY = (height - iconPlaceable.height) / 2
 
+    val rippleX = (width - indicatorRipplePlaceable.width) / 2
+    val rippleY = (height - indicatorRipplePlaceable.height) / 2
+
     return layout(width, height) {
         indicatorPlaceable?.let {
             val indicatorX = (width - it.width) / 2
@@ -397,12 +455,13 @@ private fun MeasureScope.placeIcon(
             it.placeRelative(indicatorX, indicatorY)
         }
         iconPlaceable.placeRelative(iconX, iconY)
+        indicatorRipplePlaceable.placeRelative(rippleX, rippleY)
     }
 }
 
 /**
- * Places the provided [labelPlaceable], [iconPlaceable], and [indicatorPlaceable] in the correct
- * position, depending on [alwaysShowLabel] and [animationProgress].
+ * Places the provided [Placeable]s in the correct position, depending on [alwaysShowLabel] and
+ * [animationProgress].
  *
  * When [alwaysShowLabel] is true, the positions do not move. The [iconPlaceable] will be placed
  * near the top of the item and the [labelPlaceable] will be placed near the bottom, according to
@@ -417,11 +476,12 @@ private fun MeasureScope.placeIcon(
  * When [animationProgress] is animating between these values, [iconPlaceable] and [labelPlaceable]
  * will be placed at a corresponding interpolated position.
  *
- * [indicatorPlaceable] will always be placed in such a way that it shares the same center as
- * [iconPlaceable].
+ * [indicatorRipplePlaceable] and [indicatorPlaceable] will always be placed in such a way that to
+ * share the same center as [iconPlaceable].
  *
  * @param labelPlaceable text label placeable inside this item
  * @param iconPlaceable icon placeable inside this item
+ * @param indicatorRipplePlaceable indicator ripple placeable inside this item
  * @param indicatorPlaceable indicator placeable inside this item, if it exists
  * @param constraints constraints of the item
  * @param alwaysShowLabel whether to always show the label for this item. If true, icon and label
@@ -434,6 +494,7 @@ private fun MeasureScope.placeIcon(
 private fun MeasureScope.placeLabelAndIcon(
     labelPlaceable: Placeable,
     iconPlaceable: Placeable,
+    indicatorRipplePlaceable: Placeable,
     indicatorPlaceable: Placeable?,
     constraints: Constraints,
     alwaysShowLabel: Boolean,
@@ -441,9 +502,8 @@ private fun MeasureScope.placeLabelAndIcon(
 ): MeasureResult {
     val height = constraints.maxHeight
 
-    val baseline = labelPlaceable[LastBaseline]
     // Label should be `ItemVerticalPadding` from the bottom
-    val labelY = height - baseline - NavigationBarItemVerticalPadding.roundToPx()
+    val labelY = height - labelPlaceable.height - NavigationBarItemVerticalPadding.roundToPx()
 
     // Icon (when selected) should be `ItemVerticalPadding` from the top
     val selectedIconY = NavigationBarItemVerticalPadding.roundToPx()
@@ -462,6 +522,9 @@ private fun MeasureScope.placeLabelAndIcon(
     val labelX = (containerWidth - labelPlaceable.width) / 2
     val iconX = (containerWidth - iconPlaceable.width) / 2
 
+    val rippleX = (containerWidth - indicatorRipplePlaceable.width) / 2
+    val rippleY = selectedIconY - IndicatorVerticalPadding.roundToPx()
+
     return layout(containerWidth, height) {
         indicatorPlaceable?.let {
             val indicatorX = (containerWidth - it.width) / 2
@@ -472,8 +535,11 @@ private fun MeasureScope.placeLabelAndIcon(
             labelPlaceable.placeRelative(labelX, labelY + offset)
         }
         iconPlaceable.placeRelative(iconX, selectedIconY + offset)
+        indicatorRipplePlaceable.placeRelative(rippleX, rippleY + offset)
     }
 }
+
+private const val IndicatorRippleLayoutIdTag: String = "indicatorRipple"
 
 private const val IndicatorLayoutIdTag: String = "indicator"
 
@@ -485,7 +551,8 @@ private val NavigationBarHeight: Dp = NavigationBarTokens.ContainerHeight
 
 private const val ItemAnimationDurationMillis: Int = 100
 
-private val NavigationBarItemHorizontalPadding: Dp = 4.dp
+/*@VisibleForTesting*/
+internal val NavigationBarItemHorizontalPadding: Dp = 8.dp
 
 /*@VisibleForTesting*/
 internal val NavigationBarItemVerticalPadding: Dp = 16.dp
@@ -495,3 +562,5 @@ private val IndicatorHorizontalPadding: Dp =
 
 private val IndicatorVerticalPadding: Dp =
     (NavigationBarTokens.ActiveIndicatorHeight - NavigationBarTokens.IconSize) / 2
+
+private val IndicatorVerticalOffset: Dp = 12.dp

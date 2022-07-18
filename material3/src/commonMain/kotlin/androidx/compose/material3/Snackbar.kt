@@ -1,23 +1,19 @@
 /*
- *  Mask-Android
+ * Copyright 2021 The Android Open Source Project
  *
- *  Copyright (C) 2022  DimensionDev and Contributors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  This file is part of Mask X.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Mask-Android is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Mask-Android is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Mask-Android.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package androidx.compose.material3
 
 import androidx.compose.foundation.layout.Box
@@ -98,11 +94,11 @@ fun Snackbar(
     action: @Composable (() -> Unit)? = null,
     dismissAction: @Composable (() -> Unit)? = null,
     actionOnNewLine: Boolean = false,
-    shape: Shape = SnackbarTokens.ContainerShape.toShape(),
-    containerColor: Color = SnackbarTokens.ContainerColor.toColor(),
-    contentColor: Color = SnackbarTokens.SupportingTextColor.toColor(),
-    actionContentColor: Color = SnackbarTokens.ActionLabelTextColor.toColor(),
-    dismissActionContentColor: Color = SnackbarTokens.IconColor.toColor(),
+    shape: Shape = SnackbarDefaults.Shape,
+    containerColor: Color = SnackbarDefaults.Color,
+    contentColor: Color = SnackbarDefaults.ContentColor,
+    actionContentColor: Color = SnackbarDefaults.ActionContentColor,
+    dismissActionContentColor: Color = SnackbarDefaults.DismissActionContentColor,
     content: @Composable () -> Unit
 ) {
     Surface(
@@ -200,12 +196,12 @@ fun Snackbar(
     snackbarData: SnackbarData,
     modifier: Modifier = Modifier,
     actionOnNewLine: Boolean = false,
-    shape: Shape = SnackbarTokens.ContainerShape.toShape(),
-    containerColor: Color = SnackbarTokens.ContainerColor.toColor(),
-    contentColor: Color = SnackbarTokens.SupportingTextColor.toColor(),
-    actionColor: Color = SnackbarTokens.ActionLabelTextColor.toColor(),
-    actionContentColor: Color = SnackbarTokens.ActionLabelTextColor.toColor(),
-    dismissActionContentColor: Color = SnackbarTokens.IconColor.toColor(),
+    shape: Shape = SnackbarDefaults.Shape,
+    containerColor: Color = SnackbarDefaults.Color,
+    contentColor: Color = SnackbarDefaults.ContentColor,
+    actionColor: Color = SnackbarDefaults.ActionColor,
+    actionContentColor: Color = SnackbarDefaults.ActionContentColor,
+    dismissActionContentColor: Color = SnackbarDefaults.DismissActionContentColor,
 ) {
     val actionLabel = snackbarData.visuals.actionLabel
     val actionComposable: (@Composable () -> Unit)? = if (actionLabel != null) {
@@ -400,6 +396,29 @@ private fun OneRowSnackbar(
             actionButtonPlaceable?.placeRelative(actionButtonPlaceX, actionButtonPlaceY)
         }
     }
+}
+
+/**
+ * Contains the default values used for [Snackbar].
+ */
+object SnackbarDefaults {
+    /** Default shape of a snackbar. */
+    val Shape: Shape @Composable get() = SnackbarTokens.ContainerShape.toShape()
+
+    /** Default color of a snackbar. */
+    val Color: Color @Composable get() = SnackbarTokens.ContainerColor.toColor()
+
+    /** Default content color of a snackbar. */
+    val ContentColor: Color @Composable get() = SnackbarTokens.SupportingTextColor.toColor()
+
+    /** Default action color of a snackbar. */
+    val ActionColor: Color @Composable get() = SnackbarTokens.ActionLabelTextColor.toColor()
+
+    /** Default action content color of a snackbar. */
+    val ActionContentColor: Color @Composable get() = SnackbarTokens.ActionLabelTextColor.toColor()
+
+    /** Default dismiss action content color of a snackbar. */
+    val DismissActionContentColor: Color @Composable get() = SnackbarTokens.IconColor.toColor()
 }
 
 private val ContainerMaxWidth = 600.dp

@@ -1,23 +1,19 @@
 /*
- *  Mask-Android
+ * Copyright 2021 The Android Open Source Project
  *
- *  Copyright (C) 2022  DimensionDev and Contributors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  This file is part of Mask X.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Mask-Android is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Mask-Android is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Mask-Android.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package androidx.compose.material3
 
 import androidx.compose.animation.core.Animatable
@@ -56,7 +52,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.collect
 
 /**
  * <a href="https://m3.material.io/components/buttons/overview" class="external" target="_blank">Material Design button</a>.
@@ -111,7 +106,7 @@ fun Button(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
-    shape: Shape = FilledButtonTokens.ContainerShape.toShape(),
+    shape: Shape = ButtonDefaults.Shape,
     border: BorderStroke? = null,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
@@ -138,10 +133,11 @@ fun Button(
         CompositionLocalProvider(LocalContentColor provides contentColor) {
             ProvideTextStyle(value = MaterialTheme.typography.labelLarge) {
                 Row(
-                    Modifier.defaultMinSize(
-                        minWidth = ButtonDefaults.MinWidth,
-                        minHeight = ButtonDefaults.MinHeight
-                    )
+                    Modifier
+                        .defaultMinSize(
+                            minWidth = ButtonDefaults.MinWidth,
+                            minHeight = ButtonDefaults.MinHeight
+                        )
                         .padding(contentPadding),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
@@ -203,7 +199,7 @@ fun ElevatedButton(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     elevation: ButtonElevation? = ButtonDefaults.elevatedButtonElevation(),
-    shape: Shape = ElevatedButtonTokens.ContainerShape.toShape(),
+    shape: Shape = ButtonDefaults.ElevatedShape,
     border: BorderStroke? = null,
     colors: ButtonColors = ButtonDefaults.elevatedButtonColors(),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
@@ -273,7 +269,7 @@ fun FilledTonalButton(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     elevation: ButtonElevation? = ButtonDefaults.filledTonalButtonElevation(),
-    shape: Shape = FilledTonalButtonTokens.ContainerShape.toShape(),
+    shape: Shape = ButtonDefaults.FilledTonalShape,
     border: BorderStroke? = null,
     colors: ButtonColors = ButtonDefaults.filledTonalButtonColors(),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
@@ -342,7 +338,7 @@ fun OutlinedButton(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     elevation: ButtonElevation? = null,
-    shape: Shape = OutlinedButtonTokens.ContainerShape.toShape(),
+    shape: Shape = ButtonDefaults.OutlinedShape,
     border: BorderStroke? = ButtonDefaults.outlinedButtonBorder,
     colors: ButtonColors = ButtonDefaults.outlinedButtonColors(),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
@@ -413,7 +409,7 @@ fun TextButton(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     elevation: ButtonElevation? = null,
-    shape: Shape = TextButtonTokens.ContainerShape.toShape(),
+    shape: Shape = ButtonDefaults.TextShape,
     border: BorderStroke? = null,
     colors: ButtonColors = ButtonDefaults.textButtonColors(),
     contentPadding: PaddingValues = ButtonDefaults.TextButtonContentPadding,
@@ -464,11 +460,23 @@ object ButtonDefaults {
      * [OutlinedButton] buttons.
      *
      * - See [TextButtonContentPadding] for content padding used by [TextButton].
+     * - See [ButtonWithIconContentPadding] for content padding used by [Button] that contains [Icon].
      */
     // TODO(b/201343537): Use tokens.
     val ContentPadding =
         PaddingValues(
             start = ButtonHorizontalPadding,
+            top = ButtonVerticalPadding,
+            end = ButtonHorizontalPadding,
+            bottom = ButtonVerticalPadding
+        )
+
+    private val ButtonWithIconHorizontalStartPadding = 16.dp
+
+    /** The default content padding used by [Button] that contains an [Icon]. */
+    val ButtonWithIconContentPadding =
+        PaddingValues(
+            start = ButtonWithIconHorizontalStartPadding,
             top = ButtonVerticalPadding,
             end = ButtonHorizontalPadding,
             bottom = ButtonVerticalPadding
@@ -510,6 +518,22 @@ object ButtonDefaults {
     // TODO(b/201344013): Make sure this value stays up to date until replaced with a token.
     val IconSpacing = 8.dp
 
+    // Shape Defaults
+    /** Default shape for a button. */
+    val Shape: Shape @Composable get() = FilledButtonTokens.ContainerShape.toShape()
+
+    /** Default shape for an elevated button. */
+    val ElevatedShape: Shape @Composable get() = ElevatedButtonTokens.ContainerShape.toShape()
+
+    /** Default shape for a filled tonal button. */
+    val FilledTonalShape: Shape @Composable get() = FilledTonalButtonTokens.ContainerShape.toShape()
+
+    /** Default shape for an outlined button. */
+    val OutlinedShape: Shape @Composable get() = OutlinedButtonTokens.ContainerShape.toShape()
+
+    /** Default shape for a text button. */
+    val TextShape: Shape @Composable get() = TextButtonTokens.ContainerShape.toShape()
+
     /**
      * Creates a [ButtonColors] that represents the default container and content colors used in a
      * [Button].
@@ -527,7 +551,7 @@ object ButtonDefaults {
             FilledButtonTokens.DisabledContainerColor.toColor()
                 .copy(alpha = FilledButtonTokens.DisabledContainerOpacity),
         disabledContentColor: Color = FilledButtonTokens.DisabledLabelTextColor.toColor()
-            .copy(alpha = FilledButtonTokens.DisabledLabelTextOpacity),
+                .copy(alpha = FilledButtonTokens.DisabledLabelTextOpacity),
     ): ButtonColors =
         DefaultButtonColors(
             containerColor = containerColor,

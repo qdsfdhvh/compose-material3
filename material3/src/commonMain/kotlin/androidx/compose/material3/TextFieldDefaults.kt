@@ -1,23 +1,19 @@
 /*
- *  Mask-Android
+ * Copyright 2022 The Android Open Source Project
  *
- *  Copyright (C) 2022  DimensionDev and Contributors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  This file is part of Mask X.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Mask-Android is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Mask-Android is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Mask-Android.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package androidx.compose.material3
 
 import androidx.compose.animation.animateColorAsState
@@ -32,6 +28,8 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.TextFieldDefaults.OutlinedTextFieldDecorationBox
 import androidx.compose.material3.tokens.FilledTextFieldTokens
 import androidx.compose.material3.tokens.OutlinedTextFieldTokens
@@ -60,6 +58,7 @@ import androidx.compose.ui.unit.dp
  * See [TextFieldDefaults.outlinedTextFieldColors] for the default colors used in
  * [OutlinedTextField].
  */
+@ExperimentalMaterial3Api
 @Stable
 interface TextFieldColors {
     /**
@@ -153,13 +152,26 @@ interface TextFieldColors {
      */
     @Composable
     fun cursorColor(isError: Boolean): State<Color>
+
+    /**
+     * Represents the colors used for text selection in this text field.
+     */
+    val selectionColors: TextSelectionColors
+        @Composable get
 }
 
 /**
  * Contains the default values used by [TextField] and [OutlinedTextField].
  */
+@ExperimentalMaterial3Api
 @Immutable
 object TextFieldDefaults {
+    /** Default shape for an outlined text field. */
+    val OutlinedShape: Shape @Composable get() = OutlinedTextFieldTokens.ContainerShape.toShape()
+
+    /** Default shape for a filled text field. */
+    val FilledShape: Shape @Composable get() = FilledTextFieldTokens.ContainerShape.toShape()
+
     /**
      * The default min width applied for a [TextField] and [OutlinedTextField].
      * Note that you can override it by applying Modifier.heightIn directly on a text field.
@@ -207,17 +219,15 @@ object TextFieldDefaults {
         colors: TextFieldColors,
         focusedIndicatorLineThickness: Dp = FocusedBorderThickness,
         unfocusedIndicatorLineThickness: Dp = UnfocusedBorderThickness
-    ) = composed(
-        inspectorInfo = debugInspectorInfo {
-            name = "indicatorLine"
-            properties["enabled"] = enabled
-            properties["isError"] = isError
-            properties["interactionSource"] = interactionSource
-            properties["colors"] = colors
-            properties["focusedIndicatorLineThickness"] = focusedIndicatorLineThickness
-            properties["unfocusedIndicatorLineThickness"] = unfocusedIndicatorLineThickness
-        }
-    ) {
+    ) = composed(inspectorInfo = debugInspectorInfo {
+        name = "indicatorLine"
+        properties["enabled"] = enabled
+        properties["isError"] = isError
+        properties["interactionSource"] = interactionSource
+        properties["colors"] = colors
+        properties["focusedIndicatorLineThickness"] = focusedIndicatorLineThickness
+        properties["unfocusedIndicatorLineThickness"] = unfocusedIndicatorLineThickness
+    }) {
         val stroke = animateBorderStrokeAsState(
             enabled,
             isError,
@@ -317,6 +327,7 @@ object TextFieldDefaults {
      * @param containerColor the container color for this text field
      * @param cursorColor the cursor color for this text field
      * @param errorCursorColor the cursor color for this text field when in error state
+     * @param selectionColors the colors used when the input text of this text field is selected
      * @param focusedIndicatorColor the indicator color for this text field when focused
      * @param unfocusedIndicatorColor the indicator color for this text field when not focused
      * @param disabledIndicatorColor the indicator color for this text field when disabled
@@ -337,6 +348,7 @@ object TextFieldDefaults {
      * @param placeholderColor the placeholder color for this text field
      * @param disabledPlaceholderColor the placeholder color for this text field when disabled
      */
+    @ExperimentalMaterial3Api
     @Composable
     fun textFieldColors(
         textColor: Color = FilledTextFieldTokens.InputColor.toColor(),
@@ -345,6 +357,7 @@ object TextFieldDefaults {
         containerColor: Color = FilledTextFieldTokens.ContainerColor.toColor(),
         cursorColor: Color = FilledTextFieldTokens.CaretColor.toColor(),
         errorCursorColor: Color = FilledTextFieldTokens.ErrorFocusCaretColor.toColor(),
+        selectionColors: TextSelectionColors = LocalTextSelectionColors.current,
         focusedIndicatorColor: Color = FilledTextFieldTokens.FocusActiveIndicatorColor.toColor(),
         unfocusedIndicatorColor: Color = FilledTextFieldTokens.ActiveIndicatorColor.toColor(),
         disabledIndicatorColor: Color = FilledTextFieldTokens.DisabledActiveIndicatorColor.toColor()
@@ -374,6 +387,7 @@ object TextFieldDefaults {
             disabledTextColor = disabledTextColor,
             cursorColor = cursorColor,
             errorCursorColor = errorCursorColor,
+            textSelectionColors = selectionColors,
             focusedIndicatorColor = focusedIndicatorColor,
             unfocusedIndicatorColor = unfocusedIndicatorColor,
             errorIndicatorColor = errorIndicatorColor,
@@ -405,6 +419,7 @@ object TextFieldDefaults {
      * @param containerColor the container color for this text field
      * @param cursorColor the cursor color for this text field
      * @param errorCursorColor the cursor color for this text field when in error state
+     * @param selectionColors the colors used when the input text of this text field is selected
      * @param focusedBorderColor the border color for this text field when focused
      * @param unfocusedBorderColor the border color for this text field when not focused
      * @param disabledBorderColor the border color for this text field when disabled
@@ -424,6 +439,7 @@ object TextFieldDefaults {
      * @param placeholderColor the placeholder color for this text field
      * @param disabledPlaceholderColor the placeholder color for this text field when disabled
      */
+    @ExperimentalMaterial3Api
     @Composable
     fun outlinedTextFieldColors(
         textColor: Color = OutlinedTextFieldTokens.InputColor.toColor(),
@@ -432,6 +448,7 @@ object TextFieldDefaults {
         containerColor: Color = Color.Transparent,
         cursorColor: Color = OutlinedTextFieldTokens.CaretColor.toColor(),
         errorCursorColor: Color = OutlinedTextFieldTokens.ErrorFocusCaretColor.toColor(),
+        selectionColors: TextSelectionColors = LocalTextSelectionColors.current,
         focusedBorderColor: Color = OutlinedTextFieldTokens.FocusOutlineColor.toColor(),
         unfocusedBorderColor: Color = OutlinedTextFieldTokens.OutlineColor.toColor(),
         disabledBorderColor: Color = OutlinedTextFieldTokens.DisabledOutlineColor.toColor()
@@ -461,6 +478,7 @@ object TextFieldDefaults {
             disabledTextColor = disabledTextColor,
             cursorColor = cursorColor,
             errorCursorColor = errorCursorColor,
+            textSelectionColors = selectionColors,
             focusedIndicatorColor = focusedBorderColor,
             unfocusedIndicatorColor = unfocusedBorderColor,
             errorIndicatorColor = errorBorderColor,
@@ -670,12 +688,14 @@ object TextFieldDefaults {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Immutable
 private class DefaultTextFieldColors(
     private val textColor: Color,
     private val disabledTextColor: Color,
     private val cursorColor: Color,
     private val errorCursorColor: Color,
+    private val textSelectionColors: TextSelectionColors,
     private val focusedIndicatorColor: Color,
     private val unfocusedIndicatorColor: Color,
     private val errorIndicatorColor: Color,
@@ -791,6 +811,9 @@ private class DefaultTextFieldColors(
         return rememberUpdatedState(if (isError) errorCursorColor else cursorColor)
     }
 
+    override val selectionColors: TextSelectionColors
+        @Composable get() = textSelectionColors
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
@@ -801,6 +824,7 @@ private class DefaultTextFieldColors(
         if (disabledTextColor != other.disabledTextColor) return false
         if (cursorColor != other.cursorColor) return false
         if (errorCursorColor != other.errorCursorColor) return false
+        if (textSelectionColors != other.textSelectionColors) return false
         if (focusedIndicatorColor != other.focusedIndicatorColor) return false
         if (unfocusedIndicatorColor != other.unfocusedIndicatorColor) return false
         if (errorIndicatorColor != other.errorIndicatorColor) return false
@@ -829,6 +853,7 @@ private class DefaultTextFieldColors(
         result = 31 * result + disabledTextColor.hashCode()
         result = 31 * result + cursorColor.hashCode()
         result = 31 * result + errorCursorColor.hashCode()
+        result = 31 * result + textSelectionColors.hashCode()
         result = 31 * result + focusedIndicatorColor.hashCode()
         result = 31 * result + unfocusedIndicatorColor.hashCode()
         result = 31 * result + errorIndicatorColor.hashCode()
@@ -852,6 +877,7 @@ private class DefaultTextFieldColors(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun animateBorderStrokeAsState(
     enabled: Boolean,

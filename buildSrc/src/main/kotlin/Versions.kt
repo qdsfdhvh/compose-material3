@@ -10,9 +10,10 @@ object Versions {
     }
 
     object Java {
-        const val jvmTarget = "17"
-        val java = JavaVersion.VERSION_17
+        const val jvmTarget = "11"
+        val java = JavaVersion.VERSION_11
     }
 
-    const val compose_jb = "1.2.0-alpha01-dev683"
+    const val compose_jb = "1.2.0-alpha01-dev745"
+    const val material3 = "1.0.0-alpha14"
 }
