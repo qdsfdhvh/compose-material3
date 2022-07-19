@@ -10,7 +10,7 @@ plugins {
 
 kotlin {
     android {
-        publishLibraryVariants("release")
+        publishLibraryVariants("debug", "release")
     }
     jvm()
     ios()
@@ -29,7 +29,14 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                api("androidx.compose.material3:material3:${Versions.material3}")
+                implementation("androidx.compose.material:material:${Versions.compose}")
+                implementation("androidx.compose.animation:animation:${Versions.compose}")
+                implementation("androidx.compose.ui:ui-util:${Versions.compose}")
+
+                // TODO: remove next 3 dependencies when b/202810604 is fixed
+                implementation("androidx.savedstate:savedstate-ktx:1.2.0")
+                implementation("androidx.lifecycle:lifecycle-runtime:2.5.0")
+                implementation("androidx.lifecycle:lifecycle-viewmodel:2.5.0")
             }
         }
         val noAndroidMain by creating {

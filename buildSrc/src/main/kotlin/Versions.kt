@@ -15,5 +15,5 @@ object Versions {
     }
 
     const val compose_jb = "1.2.0-alpha01-dev745"
-    const val material3 = "1.0.0-alpha14"
+    const val compose = "1.3.0-alpha01"
 }
