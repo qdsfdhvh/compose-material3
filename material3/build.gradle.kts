@@ -13,7 +13,10 @@ kotlin {
         publishLibraryVariants("debug", "release")
     }
     jvm()
-    ios()
+    iosX64()
+    iosArm64()
+    macosX64()
+    macosArm64()
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -45,7 +48,16 @@ kotlin {
         val jvmMain by getting {
             dependsOn(noAndroidMain)
         }
-        val iosMain by getting {
+        val iosX64Main by getting {
+            dependsOn(noAndroidMain)
+        }
+        val iosArm64Main by getting {
+            dependsOn(noAndroidMain)
+        }
+        val macosX64Main by getting {
+            dependsOn(noAndroidMain)
+        }
+        val macosArm64Main by getting {
             dependsOn(noAndroidMain)
         }
     }
