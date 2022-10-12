@@ -4,9 +4,9 @@ object Versions {
 
     object Android {
         const val min = 21
-        const val compile = 32
+        const val compile = 33
         const val target = compile
-        const val buildTools = "32.0.0"
+        const val buildTools = "33.0.0"
     }
 
     object Java {
@@ -14,6 +14,6 @@ object Versions {
         val java = JavaVersion.VERSION_11
     }
 
-    const val compose_jb = "1.2.0-alpha01-dev745"
-    const val compose = "1.3.0-alpha01"
+    const val compose_jb = "1.2.0"
+    const val compose = "1.3.0-rc01"
 }

@@ -25,21 +25,27 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.material)
                 implementation(compose.animation)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
                 // TODO: remove when auto implementation
                 implementation("org.jetbrains.compose.ui:ui-util:${Versions.compose_jb}")
             }
         }
         val androidMain by getting {
             dependencies {
-                implementation("androidx.compose.material:material:${Versions.compose}")
-                implementation("androidx.compose.animation:animation:${Versions.compose}")
+                implementation("androidx.compose.animation:animation-core:${Versions.compose}")
+                implementation("androidx.compose.foundation:foundation:${Versions.compose}")
+                implementation("androidx.compose.foundation:foundation-layout:${Versions.compose}")
+                implementation("androidx.compose.material:material-icons-core:${Versions.compose}")
+                implementation("androidx.compose.material:material-ripple:${Versions.compose}")
+                implementation("androidx.compose.runtime:runtime:${Versions.compose}")
                 implementation("androidx.compose.ui:ui-util:${Versions.compose}")
+                implementation("androidx.compose.ui:ui-graphics:${Versions.compose}")
+                implementation("androidx.compose.ui:ui-text:${Versions.compose}")
 
                 // TODO: remove next 3 dependencies when b/202810604 is fixed
                 implementation("androidx.savedstate:savedstate-ktx:1.2.0")
-                implementation("androidx.lifecycle:lifecycle-runtime:2.5.0")
-                implementation("androidx.lifecycle:lifecycle-viewmodel:2.5.0")
+                implementation("androidx.lifecycle:lifecycle-runtime:2.5.1")
+                implementation("androidx.lifecycle:lifecycle-viewmodel:2.5.1")
             }
         }
         val noAndroidMain by creating {
