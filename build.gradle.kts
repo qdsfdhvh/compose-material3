@@ -6,7 +6,7 @@ plugins {
     id("com.android.library").apply(false)
     kotlin("android").apply(false)
     id("org.jetbrains.compose") version Versions.compose_jb apply false
-    id("com.vanniktech.maven.publish") version "0.20.0" apply false
+    id("com.vanniktech.maven.publish") version "0.22.0" apply false
 }
 
 allprojects {
@@ -26,7 +26,7 @@ allprojects {
     plugins.withId("com.vanniktech.maven.publish.base") {
         @Suppress("UnstableApiUsage")
         configure<MavenPublishBaseExtension> {
-            publishToMavenCentral(SonatypeHost.S01)
+            publishToMavenCentral(SonatypeHost.S01, automaticRelease = true)
             signAllPublications()
             pom {
                 description.set("Compose Material3.")
