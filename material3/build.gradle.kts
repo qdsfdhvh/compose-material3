@@ -54,17 +54,23 @@ kotlin {
         val jvmMain by getting {
             dependsOn(noAndroidMain)
         }
-        val iosX64Main by getting {
+        val iosMain by creating {
             dependsOn(noAndroidMain)
         }
+        val iosX64Main by getting {
+            dependsOn(iosMain)
+        }
         val iosArm64Main by getting {
+            dependsOn(iosMain)
+        }
+        val macosMain by creating {
             dependsOn(noAndroidMain)
         }
         val macosX64Main by getting {
-            dependsOn(noAndroidMain)
+            dependsOn(macosMain)
         }
         val macosArm64Main by getting {
-            dependsOn(noAndroidMain)
+            dependsOn(macosMain)
         }
     }
 }
