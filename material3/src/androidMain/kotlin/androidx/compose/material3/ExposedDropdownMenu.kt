@@ -122,8 +122,12 @@ fun ExposedDropdownMenuBox(
                     onGloballyPositioned {
                         width = it.size.width
                         coordinates.value = it
-                        updateHeight(view.rootView, coordinates.value, verticalMarginInPx) {
-                            newHeight -> menuHeight = newHeight
+                        updateHeight(
+                            view.rootView,
+                            coordinates.value,
+                            verticalMarginInPx
+                        ) { newHeight ->
+                            menuHeight = newHeight
                         }
                     }.expandable(
                         expanded = expanded,
