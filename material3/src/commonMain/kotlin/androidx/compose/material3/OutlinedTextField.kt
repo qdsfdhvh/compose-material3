@@ -188,7 +188,7 @@ fun OutlinedTextField(
             interactionSource = interactionSource,
             singleLine = singleLine,
             maxLines = maxLines,
-            minLines = minLines,
+            // minLines = minLines,
             decorationBox = @Composable { innerTextField ->
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
                     value = value,
@@ -342,7 +342,7 @@ fun OutlinedTextField(
             interactionSource = interactionSource,
             singleLine = singleLine,
             maxLines = maxLines,
-            minLines = minLines,
+            // minLines = minLines,
             decorationBox = @Composable { innerTextField ->
                 TextFieldDefaults.OutlinedTextFieldDecorationBox(
                     value = value.text,

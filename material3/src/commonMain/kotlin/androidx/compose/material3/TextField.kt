@@ -203,7 +203,7 @@ fun TextField(
             interactionSource = interactionSource,
             singleLine = singleLine,
             maxLines = maxLines,
-            minLines = minLines,
+            // minLines = minLines,
             decorationBox = @Composable { innerTextField ->
                 // places leading icon, text field with label and placeholder, trailing icon
                 TextFieldDefaults.TextFieldDecorationBox(
@@ -343,7 +343,7 @@ fun TextField(
             interactionSource = interactionSource,
             singleLine = singleLine,
             maxLines = maxLines,
-            minLines = minLines,
+            // minLines = minLines,
             decorationBox = @Composable { innerTextField ->
                 // places leading icon, text field with label and placeholder, trailing icon
                 TextFieldDefaults.TextFieldDecorationBox(

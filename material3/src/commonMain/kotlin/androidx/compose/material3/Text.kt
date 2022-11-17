@@ -136,7 +136,7 @@ fun Text(
         overflow,
         softWrap,
         maxLines,
-        minLines
+        // minLines
     )
 }
 
@@ -285,7 +285,7 @@ fun Text(
         overflow = overflow,
         softWrap = softWrap,
         maxLines = maxLines,
-        minLines = minLines,
+        // minLines = minLines,
         inlineContent = inlineContent
     )
 }
