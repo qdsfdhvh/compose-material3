@@ -14,6 +14,6 @@ object Versions {
         val java = JavaVersion.VERSION_11
     }
 
-    const val compose_jb = "1.2.0"
-    const val compose = "1.3.0-rc01"
+    const val compose_jb = "1.3.0-beta01"
+    const val compose = "1.3.1"
 }

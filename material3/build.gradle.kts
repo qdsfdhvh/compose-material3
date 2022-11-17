@@ -19,6 +19,7 @@ kotlin {
     macosArm64()
     sourceSets {
         val commonMain by getting {
+            kotlin.srcDir("src/commonMain/custom")
             dependencies {
                 implementation(compose.ui)
                 implementation(compose.foundation)
