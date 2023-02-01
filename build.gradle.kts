@@ -6,7 +6,7 @@ plugins {
     id("com.android.library").apply(false)
     kotlin("android").apply(false)
     id("org.jetbrains.compose") version Versions.compose_jb apply false
-    id("com.vanniktech.maven.publish") version "0.22.0" apply false
+    id("com.vanniktech.maven.publish") version "0.24.0" apply false
 }
 
 allprojects {

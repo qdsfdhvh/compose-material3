@@ -79,10 +79,8 @@ kotlin {
 android {
     namespace = "io.github.qdsfdhvh.material3"
     compileSdk = Versions.Android.compile
-    buildToolsVersion = Versions.Android.buildTools
     defaultConfig {
         minSdk = Versions.Android.min
-        targetSdk = Versions.Android.target
     }
     compileOptions {
         sourceCompatibility = Versions.Java.java
