@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 // TODO: Provide M3 tab row asset and docs when available.
 /**
@@ -157,7 +158,8 @@ fun TabRow(
                     constraints.copy(
                         minWidth = tabWidth,
                         maxWidth = tabWidth,
-                        minHeight = tabRowHeight
+                        minHeight = tabRowHeight,
+                        maxHeight = max(tabRowHeight, constraints.maxHeight),
                     )
                 )
             }
